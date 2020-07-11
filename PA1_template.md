@@ -7,14 +7,16 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r echo = TRUE}
+
+```r
 unzip("./activity.zip")
 activity <- read.csv("./activity.csv")
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
 ```
 
 ## What is mean total number of steps taken per day?
-```{r echo = TRUE, message = FALSE, warning = FALSE}
+
+```r
 library(dplyr)
 dailySum <- activity %>%
         group_by(date) %>%
@@ -28,12 +30,29 @@ g1 <- ggplot(dailySum, aes(x = steps)) +
              x = "Steps") + 
         theme_bw()
 print(g1)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 mean(dailySum$steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(dailySum$steps, na.rm = TRUE)
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{r echo = TRUE, message = FALSE, warning = FALSE}
+
+```r
 intMean <- activity %>%
         group_by(interval) %>%
         summarise(interval = unique(interval),
@@ -45,12 +64,29 @@ g2 <- ggplot(intMean, aes(x = interval, y = steps)) +
              y = "Steps") + 
         theme_bw()
 print(g2)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 intMean[which.max(intMean$steps), ]$interval
 ```
 
+```
+## [1] 835
+```
+
 ## Imputing missing values
-```{r echo = TRUE, message = FALSE, warning = FALSE}
+
+```r
 sum(is.na(activity$steps))
+```
+
+```
+## [1] 2304
+```
+
+```r
 impute <- intMean$steps[match(intMean$interval, activity$interval)]
 activity2 <- activity %>% mutate(steps = ifelse(is.na(steps), impute, steps))
 dailySum2 <- activity2 %>%
@@ -64,13 +100,30 @@ g3 <- ggplot(dailySum2, aes(x = steps)) +
              x = "Steps") + 
         theme_bw()
 print(g3)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 mean(dailySum2$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(dailySum2$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r echo = TRUE, message = FALSE, warning = FALSE}
+
+```r
 activity2 <- activity2 %>% mutate(day = as.factor(ifelse(weekdays(date) %in% c("Saturday", "Sunday"), "weekend", "weekday")))
 intMean2 <- activity2 %>%
         group_by(interval, day) %>%
@@ -86,3 +139,5 @@ g4 <- ggplot(intMean2, aes(x = interval, y = steps)) +
         theme_bw()
 print(g4)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
