@@ -21,7 +21,7 @@ library(dplyr)
 dailySum <- activity %>%
         group_by(date) %>%
         summarise(date = unique(date),
-                  steps = sum(steps))
+                  steps = sum(steps, na.rm = TRUE))
 library(ggplot2)
 g1 <- ggplot(dailySum, aes(x = steps)) + 
         geom_histogram(color = "black", fill = "darkblue", 
@@ -35,19 +35,19 @@ print(g1)
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 ```r
-mean(dailySum$steps, na.rm = TRUE)
+mean(dailySum$steps)
 ```
 
 ```
-## [1] 10766.19
+## [1] 9354.23
 ```
 
 ```r
-median(dailySum$steps, na.rm = TRUE)
+median(dailySum$steps)
 ```
 
 ```
-## [1] 10765
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
